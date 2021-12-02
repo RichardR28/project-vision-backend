@@ -11,4 +11,13 @@ router.get('/createUser', (req, res) => {
   });
 });
 
+router.get('/getGeneros', (req, res) => {
+  let sql = 'select * from generos ';
+  sql += 'order by label';
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
 module.exports = router;
