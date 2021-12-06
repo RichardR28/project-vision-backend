@@ -22,7 +22,6 @@ router.post('/getEstados', (req, res) => {
 });
 
 router.post('/getCidades', (req, res) => {
-  console.log(req.body);
   let sql = 'select * from cidades ';
   sql += `where idEstado = ${req.body.id}`;
   connection.query(sql, (err, result) => {
