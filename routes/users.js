@@ -70,4 +70,13 @@ router.post('/validaUsername', (req, res) => {
   });
 });
 
+router.post('/login', (req, res) => {
+  const senhaHash = gerarSenha(req.body.password);
+  let sql = `select * from usuarios where (username = '${req.body.username}' or email = '${req.body.email}') && senha = '${senhaHash}'`;
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
 module.exports = router;
