@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var testAPIRouter = require('./routes/testAPI');
 var addressRouter = require('./routes/address');
+var gamesRouter = require('./routes/games');
 var app = express();
 
 // view engine setup
@@ -36,6 +37,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/testAPI', testAPIRouter);
 app.use('/address', addressRouter);
+app.use('/games', gamesRouter);
 // catch 404 and forward to error handler
 
 app.use(function (req, res, next) {
