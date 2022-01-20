@@ -115,29 +115,37 @@ router.post('/checkEmail', (req, res) => {
   let sql = `select senha from usuarios where email = '${email}'`;
   connection.query(sql, async (err, result) => {
     if (err) throw err;
-    const senha = result[0].senha;
-    let fullKeyHash = crypto.createHmac('sha512', senha);
-    fullKeyHash.update(crypto.randomBytes(6).toString('hex'));
-    fullKeyHash = fullKeyHash.digest('hex');
-    const keyHash = fullKeyHash.substr(0, 5).toUpperCase();
-    enviaEmail(email, keyHash);
-    const maskKey = sha512Aux(keyHash);
-    res.send({ status: 200, key: maskKey });
+    if (result.length === 0) {
+      res.send({ status: 500 });
+    } else {
+      const senha = result[0].senha;
+      let fullKeyHash = crypto.createHmac('sha512', senha);
+      fullKeyHash.update(crypto.randomBytes(6).toString('hex'));
+      fullKeyHash = fullKeyHash.digest('hex');
+      const keyHash = fullKeyHash.substr(0, 5).toUpperCase();
+      enviaEmail(email, keyHash);
+      const maskKey = sha512Aux(keyHash);
+      res.send({ status: 200, key: maskKey });
+    }
   });
 });
 
 router.post('/redefineSenha', (req, res) => {
   const { email, senha } = req.body;
   const senhaHash = gerarSenha(senha);
-  const sqlSelect = `select id from usuarios where email = '${email}'`;
+  const sqlSelect = `select id, senha from usuarios where email = '${email}'`;
   connection.query(sqlSelect, (err, result) => {
     if (err) throw err;
     const id = result[0].id;
-    let sqlUpdate = `update usuarios set senha = '${senhaHash}' where id = ${id} `;
-    connection.query(sqlUpdate, (err2) => {
-      if (err2) throw err2;
-      res.send({ status: 200 });
-    });
+    if (senhaHash === result[0].senha) {
+      res.send({ status: 500, msg: 'A senha não pode ser igual à anterior.' });
+    } else {
+      let sqlUpdate = `update usuarios set senha = '${senhaHash}' where id = ${id} `;
+      connection.query(sqlUpdate, (err2) => {
+        if (err2) throw err2;
+        res.send({ status: 200 });
+      });
+    }
   });
 });
 
