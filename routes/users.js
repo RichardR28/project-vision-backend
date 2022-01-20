@@ -153,7 +153,7 @@ async function enviaEmail(email, key) {
   const mailSent = await Trasporter.sendMail({
     text: `Olá, segue chave para troca de senha no sistema. CHAVE: ${key}`,
     subject: 'Chave para redefinição de senha Vision',
-    from: SMTP_CONFIG.user,
+    from: SMTP_CONFIG.from,
     to: email,
   });
   console.log('Info: ', mailSent);
