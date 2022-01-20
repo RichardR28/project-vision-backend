@@ -4,9 +4,22 @@ const connection = require('../connection');
 const crypto = require('crypto');
 const salt = '690b5443198e34da4adf22098442e92b';
 
-// function gerarSalt() {
-//   return crypto.randomBytes(16).toString('hex');
-// }
+const nodemailer = require('nodemailer');
+const SMTP_CONFIG = require('../smtp');
+
+const Trasporter = nodemailer.createTransport({
+  host: SMTP_CONFIG.host,
+  port: SMTP_CONFIG.port,
+  secure: false,
+  auth: { user: SMTP_CONFIG.user, pass: SMTP_CONFIG.pass },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
+function gerarSalt() {
+  return crypto.randomBytes(16).toString('hex');
+}
 
 function sha512(senha) {
   var hash = crypto.createHmac('sha512', salt); // Algoritmo de cripto sha512
@@ -16,6 +29,14 @@ function sha512(senha) {
     salt,
     hash,
   };
+}
+
+function sha512Aux(key) {
+  const salt = gerarSalt();
+  let hash = crypto.createHmac('sha512', salt);
+  hash.update(key);
+  hash = hash.digest('hex');
+  return { salt, hash };
 }
 
 function gerarSenha(senha) {
@@ -88,5 +109,46 @@ router.get('/getUserId', (req, res) => {
     res.send(result);
   });
 });
+
+router.post('/checkEmail', (req, res) => {
+  const { email } = req.body;
+  let sql = `select senha from usuarios where email = '${email}'`;
+  connection.query(sql, async (err, result) => {
+    if (err) throw err;
+    const senha = result[0].senha;
+    let fullKeyHash = crypto.createHmac('sha512', senha);
+    fullKeyHash.update(crypto.randomBytes(6).toString('hex'));
+    fullKeyHash = fullKeyHash.digest('hex');
+    const keyHash = fullKeyHash.substr(0, 5).toUpperCase();
+    enviaEmail(email, keyHash);
+    const maskKey = sha512Aux(keyHash);
+    res.send({ status: 200, key: maskKey });
+  });
+});
+
+router.post('/redefineSenha', (req, res) => {
+  const { email, senha } = req.body;
+  const senhaHash = gerarSenha(senha);
+  const sqlSelect = `select id from usuarios where email = '${email}'`;
+  connection.query(sqlSelect, (err, result) => {
+    if (err) throw err;
+    const id = result[0].id;
+    let sqlUpdate = `update usuarios set senha = '${senhaHash}' where id = ${id} `;
+    connection.query(sqlUpdate, (err2) => {
+      if (err2) throw err2;
+      res.send({ status: 200 });
+    });
+  });
+});
+
+async function enviaEmail(email, key) {
+  const mailSent = await Trasporter.sendMail({
+    text: `Olá, segue chave para troca de senha no sistema. CHAVE: ${key}`,
+    subject: 'Chave para redefinição de senha Vision',
+    from: SMTP_CONFIG.user,
+    to: email,
+  });
+  console.log('Info: ', mailSent);
+}
 
 module.exports = router;
