@@ -149,6 +149,53 @@ router.post('/redefineSenha', (req, res) => {
   });
 });
 
+router.post('/getUser', (req, res) => {
+  const { id, email, username } = req.body;
+  let sql =
+    'select nome, username, email, cpf, dataNascimento, telefone, genero, idPais, idEstado, idCidade from usuarios ';
+  sql += `where id = ${id} and username = '${username}' and email = '${email}'`;
+
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send({ status: 200, result: result[0] });
+  });
+});
+
+router.post('/alteraUsuario', (req, res) => {
+  const { id, telefone, pais, estado, cidade } = req.body;
+  let sql = `update usuarios set telefone = '${telefone}', idPais = ${pais}, idEstado = ${estado}, idCidade = ${cidade} where id = ${id};`;
+
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send({ status: 200 });
+  });
+});
+
+router.post('/alterarSenha', (req, res) => {
+  const { id, senha, novaSenha } = req.body;
+  const senhaHash = gerarSenha(senha);
+  const novaSenhaHash = gerarSenha(novaSenha);
+  let selectSql = `select senha from usuarios where id = ${id}`;
+  let updateSql = `update usuarios set senha = '${novaSenhaHash}'`;
+  connection.query(selectSql, (err, result) => {
+    if (err) {
+      res.send({ status: 500, msg: 'Erro ao buscar usuário.' });
+    } else {
+      if (result && result[0] && result[0].senha === senhaHash) {
+        connection.query(updateSql, (err2, result2) => {
+          if (err2) {
+            res.send({ status: 500, msg: 'Erro durante aalteração da senha.' });
+          } else {
+            res.send({ status: 200, msg: 'Senha alterada com sucesso' });
+          }
+        });
+      } else {
+        res.send({ status: 500, msg: 'Senha informada inválida.' });
+      }
+    }
+  });
+});
+
 async function enviaEmail(email, key) {
   const mailSent = await Trasporter.sendMail({
     text: `Olá, segue chave para troca de senha no sistema. CHAVE: ${key}`,

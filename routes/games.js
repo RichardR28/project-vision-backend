@@ -45,4 +45,19 @@ router.post('/acceptSolicitation', (req, res) => {
   });
 });
 
+router.post('/getSolicitacoesUsuarios', (req, res) => {
+  const { id } = req.body;
+  let sql =
+    'SELECT solicitacoes.id, solicitacoes.usuario, solicitacoes.retorno, solicitacoes.descricao, solicitacoes.dataSolicitacao, usuarios.nome, usuarios.email, usuarios.telefone, usuarios.username ';
+  sql += 'FROM solicitacoes ';
+  sql += 'INNER JOIN usuarios ON (usuarios.id = solicitacoes.usuario) ';
+  sql += `WHERE usuarios.id = '${id}' `;
+  sql += 'ORDER BY dataSolicitacao ASC';
+
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
 module.exports = router;
