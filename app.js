@@ -4,12 +4,14 @@ var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var testAPIRouter = require('./routes/testAPI');
 var addressRouter = require('./routes/address');
 var gamesRouter = require('./routes/games');
+var quizzesRouter = require('./routes/quizzes');
 var app = express();
 
 // view engine setup
@@ -33,11 +35,15 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/testAPI', testAPIRouter);
 app.use('/address', addressRouter);
 app.use('/games', gamesRouter);
+app.use('/quizzes', quizzesRouter);
 // catch 404 and forward to error handler
 
 app.use(function (req, res, next) {

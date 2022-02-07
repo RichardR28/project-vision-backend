@@ -91,6 +91,15 @@ router.post('/validaUsername', (req, res) => {
   });
 });
 
+router.post('/validaEmail', (req, res) => {
+  let sql = 'select count(*) count from usuarios ';
+  sql += `where email = "${req.body.email}"`;
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
 router.post('/login', (req, res) => {
   const senhaHash = gerarSenha(req.body.password);
   let sql = `select * from usuarios where (username = '${req.body.username}' or email = '${req.body.email}') and senha = '${senhaHash}'`;
