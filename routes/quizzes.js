@@ -3,6 +3,7 @@ var router = express.Router();
 var connection = require('../connection');
 const multer = require('multer');
 const moment = require('moment');
+var fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -23,9 +24,9 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 10,
-  },
+  // limits: {
+  //   fileSize: 1024 * 1024 * 10,
+  // },
   fileFilter: fileFilter,
 });
 
@@ -90,6 +91,26 @@ router.post('/ativaQuiz', (req, res) => {
   const sql = `update quizzes set status = 1 where id = '${id}'`;
   connection.query(sql, (err, result) => {
     if (err) throw err;
+    res.send({ status: 200, result });
+  });
+});
+
+router.get('/listaQuizzes', (req, res) => {
+  let sql =
+    'SELECT quizzes.id, quizzes.titulo, quizzes.imagem, quizzes.idCriador, ';
+  sql += 'quizzes.acessos, quizzes.descricao, quizzes.dataCriacao, ';
+  sql += 'usuarios.nome, usuarios.email, usuarios.telefone ';
+  sql += 'from quizzes ';
+  sql += 'inner join usuarios on (quizzes.idCriador = usuarios.id) ';
+  sql += 'WHERE quizzes.status = 1';
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    // result.forEach((item) => {
+    //   if (item.imagem) {
+    //     const file = fs.readFileSync(`./Images/${item.imagem}`);
+    //     item.imagem = file;
+    //   }
+    // });
     res.send({ status: 200, result });
   });
 });

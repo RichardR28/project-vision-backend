@@ -13,7 +13,7 @@ var addressRouter = require('./routes/address');
 var gamesRouter = require('./routes/games');
 var quizzesRouter = require('./routes/quizzes');
 var app = express();
-
+var path = require('path');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -25,6 +25,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use(cors());
+
+app.use('/Images', express.static(path.resolve(__dirname, 'Images')));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
