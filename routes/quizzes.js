@@ -105,12 +105,51 @@ router.get('/listaQuizzes', (req, res) => {
   sql += 'WHERE quizzes.status = 1';
   connection.query(sql, (err, result) => {
     if (err) throw err;
-    // result.forEach((item) => {
-    //   if (item.imagem) {
-    //     const file = fs.readFileSync(`./Images/${item.imagem}`);
-    //     item.imagem = file;
-    //   }
-    // });
+    res.send({ status: 200, result });
+  });
+});
+
+router.post('/buscaTeste', (req, res) => {
+  const { id } = req.body;
+  let sql =
+    'SELECT perguntas.quizId, perguntas.id, perguntas.pergunta, perguntas.imagem, perguntas.tipoResposta, ';
+  sql +=
+    'perguntas.opcao1, perguntas.opcao2, perguntas.opcao3, perguntas.opcao4 FROM perguntas ';
+  sql += `WHERE quizId = ${id} ORDER BY sequencia ASC`;
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send({ status: 200, result });
+  });
+});
+
+router.post('/salvarRespostas', (req, res) => {
+  const { respostas, quizId, userId } = req.body;
+  const serie = Date.now();
+  Object.values(respostas).forEach((item) => {
+    const sql = `insert into respostas (resposta, quizId, perguntaId, userId, serie) values ('${item.value}', '${quizId}', '${item.perguntaId}', '${userId}', '${serie}')`;
+    connection.query(sql, (err, res) => {
+      if (err) throw err;
+      console.log(res);
+    });
+  });
+
+  res.send({ status: 200 });
+});
+
+router.post('/buscarResultados', (req, res) => {
+  const { userId } = req.body;
+  let sql =
+    'SELECT respostas.quizId, quizzes.titulo, quizzes.descricao, respostas.perguntaId, respostas.resposta, perguntas.resposta gabarito, respostas.serie, ';
+  sql +=
+    'quizzes.imagem, usuarios.username, usuarios.nome, usuarios.email, usuarios.telefone ';
+  sql += 'FROM respostas ';
+  sql += 'INNER JOIN perguntas ON (respostas.perguntaId = perguntas.id) ';
+  sql += 'INNER JOIN quizzes on (perguntas.quizId = quizzes.id) ';
+  sql += 'INNER JOIN usuarios on (quizzes.idCriador = usuarios.id) ';
+  sql += `WHERE quizzes.status = 1 AND respostas.userId = ${userId}`;
+
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
     res.send({ status: 200, result });
   });
 });

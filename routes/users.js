@@ -83,10 +83,12 @@ router.get('/getGeneros', (req, res) => {
 });
 
 router.post('/validaUsername', (req, res) => {
+  console.log(req.body);
   let sql = 'select count(*) count from usuarios ';
   sql += `where username = "${req.body.username}"`;
   connection.query(sql, (err, result) => {
     if (err) throw err;
+    console.log(result[0]);
     res.send(result);
   });
 });
@@ -94,8 +96,10 @@ router.post('/validaUsername', (req, res) => {
 router.post('/validaEmail', (req, res) => {
   let sql = 'select count(*) count from usuarios ';
   sql += `where email = "${req.body.email}"`;
+  console.log(req.body.email);
   connection.query(sql, (err, result) => {
     if (err) throw err;
+    console.log(result[0]);
     res.send(result);
   });
 });
