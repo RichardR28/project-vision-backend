@@ -60,4 +60,16 @@ router.post('/getSolicitacoesUsuarios', (req, res) => {
   });
 });
 
+router.post('/registraPontuacao', (req, res) => {
+  const { userId, gameId, resultado01, resultado02, resultado03, media } =
+    req.body;
+  const serie = Date.now();
+  const sql = `insert into pontuacoes (gameId, userId, resposta01, resposta02, resposta03, media, serie) values ('${gameId}', '${userId}', '${resultado01}', '${resultado02}', '${resultado03}', '${media}', '${serie}')`;
+
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send({ status: 200, result });
+  });
+});
+
 module.exports = router;
