@@ -64,8 +64,34 @@ router.post('/registraPontuacao', (req, res) => {
   const { userId, gameId, resultado01, resultado02, resultado03, media } =
     req.body;
   const serie = Date.now();
-  const sql = `insert into pontuacoes (gameId, userId, resposta01, resposta02, resposta03, media, serie) values ('${gameId}', '${userId}', '${resultado01}', '${resultado02}', '${resultado03}', '${media}', '${serie}')`;
+  const sql = `insert into pontuacoes (gameId, userId, resultado01, resultado02, resultado03, media, serie) values ('${gameId}', '${userId}', '${resultado01}', '${resultado02}', '${resultado03}', '${media}', '${serie}')`;
 
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send({ status: 200, result });
+  });
+});
+
+router.get('/listaJogosAtivos', (req, res) => {
+  let sql =
+    'SELECT jogos.id, jogos.acessos, jogos.titulo, jogos.imagem, jogos.descricao, jogos.dataCriacao, jogos.codigo, usuarios.nome, usuarios.email, usuarios.telefone ';
+  sql +=
+    'FROM jogos INNER JOIN usuarios ON (usuarios.id = jogos.idCriador) WHERE status = 1';
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send({ status: 200, result });
+  });
+});
+
+router.post('/listaPontuacoesUsuario', (req, res) => {
+  const { id } = req.body;
+  let sql =
+    'SELECT pontuacoes.id, pontuacoes.resultado01, pontuacoes.resultado02, pontuacoes.resultado03, pontuacoes.media, ';
+  sql +=
+    'pontuacoes.serie, usuarios.nome, usuarios.email, usuarios.telefone, jogos.titulo FROM pontuacoes ';
+  sql +=
+    'INNER JOIN jogos ON (jogos.id = pontuacoes.gameId) INNER JOIN usuarios ON (usuarios.id = jogos.idCriador) ';
+  sql += `WHERE userId = ${id}`;
   connection.query(sql, (err, result) => {
     if (err) throw err;
     res.send({ status: 200, result });
