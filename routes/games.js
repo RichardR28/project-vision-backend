@@ -91,7 +91,8 @@ router.post('/listaPontuacoesUsuario', (req, res) => {
     'pontuacoes.serie, usuarios.nome, usuarios.email, usuarios.telefone, jogos.titulo FROM pontuacoes ';
   sql +=
     'INNER JOIN jogos ON (jogos.id = pontuacoes.gameId) INNER JOIN usuarios ON (usuarios.id = jogos.idCriador) ';
-  sql += `WHERE userId = ${id}`;
+  sql += `WHERE userId = ${id} `;
+  sql += `ORDER BY pontuacoes.serie desc`;
   connection.query(sql, (err, result) => {
     if (err) throw err;
     res.send({ status: 200, result });
