@@ -146,8 +146,8 @@ router.post('/buscarResultados', (req, res) => {
   sql += 'INNER JOIN perguntas ON (respostas.perguntaId = perguntas.id) ';
   sql += 'INNER JOIN quizzes on (perguntas.quizId = quizzes.id) ';
   sql += 'INNER JOIN usuarios on (quizzes.idCriador = usuarios.id) ';
-  sql += `WHERE quizzes.status = 1 AND respostas.userId = ${userId}`;
-
+  sql += `WHERE quizzes.status = 1 AND respostas.userId = ${userId} `;
+  sql += 'ORDER BY respostas.serie desc';
   connection.query(sql, (err, result) => {
     if (err) throw err;
     res.send({ status: 200, result });
