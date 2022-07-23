@@ -24,8 +24,8 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-//  192.168.100.10 IP casa
-server.listen(port, '192.168.0.23');
+//  192.168.0.23 IP casa
+server.listen(port, '192.168.15.2');
 server.on('error', onError);
 server.on('listening', onListening);
 
