@@ -80,13 +80,20 @@ router.post('/registraPontuacao', (req, res) => {
     req.body;
   const serie = Date.now();
   const sql = `insert into pontuacoes (gameId, userId, resultado01, resultado02, resultado03, media, serie) values ('${gameId}', '${userId}', '${resultado01}', '${resultado02}', '${resultado03}', '${media}', '${serie}')`;
+  const sql2 = `update jogos set acessos = acessos + 1 where id = ${gameId}`;
 
   connection.query(sql, (err, result) => {
     if (err) {
       res.status(500);
       res.send({status: 500, details: err});
     }
-    res.send({ status: 200, result });
+    connection.query(sql2, (err2, result2) => {
+      if (err2) {
+        res.status(500);
+        res.send({status: 500, details: err2});
+      } 
+      res.send({ status: 200, result });
+    });
   });
 });
 

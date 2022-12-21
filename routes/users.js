@@ -11,7 +11,8 @@ const Trasporter = nodemailer.createTransport({
   host: SMTP_CONFIG.host,
   port: SMTP_CONFIG.port,
   secure: false,
-  auth: { user: SMTP_CONFIG.user, pass: SMTP_CONFIG.pass },
+  service: 'gmail',
+  auth: { user: SMTP_CONFIG.user, pass: 'jfgqrqljnflizypw' },
   tls: {
     rejectUnauthorized: false,
   },
