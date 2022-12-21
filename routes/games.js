@@ -6,7 +6,10 @@ router.post('/saveSolicitacoes', (req, res) => {
   const { id, descricao, dataSolicitacao } = req.body;
   let sql = `insert into solicitacoes (usuario, descricao, dataSolicitacao, retorno) values (${id}, '${descricao}', '${dataSolicitacao}', 0)`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    }
     res.send({ status: 200, result });
   });
 });
@@ -20,7 +23,10 @@ router.get('/getSolicitacoes', (req, res) => {
   sql += 'ORDER BY dataSolicitacao ASC';
 
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    }
     res.send(result);
   });
 });
@@ -30,7 +36,10 @@ router.post('/declineSolicitation', (req, res) => {
   let sql = `UPDATE solicitacoes SET retorno = 2 where id = ${id}`;
 
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    }
     res.send({ status: 200 });
   });
 });
@@ -40,7 +49,10 @@ router.post('/acceptSolicitation', (req, res) => {
   let sql = `UPDATE solicitacoes SET retorno = 1 where id = ${id}`;
 
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    }
     res.send({ status: 200 });
   });
 });
@@ -55,7 +67,10 @@ router.post('/getSolicitacoesUsuarios', (req, res) => {
   sql += 'ORDER BY dataSolicitacao ASC';
 
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    }
     res.send(result);
   });
 });
@@ -67,7 +82,10 @@ router.post('/registraPontuacao', (req, res) => {
   const sql = `insert into pontuacoes (gameId, userId, resultado01, resultado02, resultado03, media, serie) values ('${gameId}', '${userId}', '${resultado01}', '${resultado02}', '${resultado03}', '${media}', '${serie}')`;
 
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    }
     res.send({ status: 200, result });
   });
 });
@@ -78,7 +96,10 @@ router.get('/listaJogosAtivos', (req, res) => {
   sql +=
     'FROM jogos INNER JOIN usuarios ON (usuarios.id = jogos.idCriador) WHERE status = 1';
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    }
     res.send({ status: 200, result });
   });
 });
@@ -94,7 +115,10 @@ router.post('/listaPontuacoesUsuario', (req, res) => {
   sql += `WHERE userId = ${id} `;
   sql += `ORDER BY pontuacoes.serie desc`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    }
     res.send({ status: 200, result });
   });
 });

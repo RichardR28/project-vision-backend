@@ -7,7 +7,10 @@ router.get('/getPaises', (req, res) => {
   sql += 'inner join estados on (paises.id = estados.idPais) ';
   sql += 'group by paises.id ';
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    }
     res.send(result);
   });
 });
@@ -16,7 +19,10 @@ router.post('/getEstados', (req, res) => {
   let sql = 'select * from estados ';
   sql += `where idPais = ${req.body.id}`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    }
     res.send(result);
   });
 });
@@ -25,7 +31,10 @@ router.post('/getCidades', (req, res) => {
   let sql = 'select * from cidades ';
   sql += `where idEstado = ${req.body.id}`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    }
     res.send(result);
   });
 });

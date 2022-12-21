@@ -39,7 +39,10 @@ router.post(
     const arquivo = req.files['logo'][0].filename;
     const sql = `insert into quizzes (titulo, imagem, idCriador, descricao, dataCriacao, status) values ('${titulo}', '${arquivo}', '${id}', '${descricao}', '${data}', '${1}')`;
     connection.query(sql, (err, result) => {
-      if (err) throw err;
+      if (err) {
+        res.status(500);
+        res.send({status: 500, datails: err});
+      }
       const aux = JSON.parse(perguntas);
       aux.forEach((item, index) => {
         let perguntaSql = '';
@@ -60,7 +63,10 @@ router.post(
           perguntaSql += ` values ('${item.sequencia}', '${item.pergunta}', '${auxImage}', '${item.tipo}', '${item.resposta}', ${result.insertId})`;
         }
         connection.query(perguntaSql, (err2, result2) => {
-          if (err2) throw err2;
+          if (err2) {
+            res.status(500);
+            res.send({status: 500, datails: err2});
+          }
         });
       });
       res.send({ status: 200 });
@@ -72,7 +78,10 @@ router.post('/listaQuizzesUsuario', (req, res) => {
   const { id } = req.body;
   const sql = `select id, titulo, descricao, dataCriacao,  status, acessos from quizzes where idCriador = '${id}'`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    }
     res.send({ status: 200, result });
   });
 });
@@ -81,7 +90,10 @@ router.post('/desativaQuiz', (req, res) => {
   const { id } = req.body;
   const sql = `update quizzes set status = 0 where id = '${id}'`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    }
     res.send({ status: 200, result });
   });
 });
@@ -90,7 +102,10 @@ router.post('/ativaQuiz', (req, res) => {
   const { id } = req.body;
   const sql = `update quizzes set status = 1 where id = '${id}'`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    }
     res.send({ status: 200, result });
   });
 });
@@ -104,7 +119,10 @@ router.get('/listaQuizzes', (req, res) => {
   sql += 'inner join usuarios on (quizzes.idCriador = usuarios.id) ';
   sql += 'WHERE quizzes.status = 1';
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    }
     res.send({ status: 200, result });
   });
 });
@@ -117,7 +135,10 @@ router.post('/buscaTeste', (req, res) => {
     'perguntas.opcao1, perguntas.opcao2, perguntas.opcao3, perguntas.opcao4 FROM perguntas ';
   sql += `WHERE quizId = ${id} ORDER BY sequencia ASC`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    }
     res.send({ status: 200, result });
   });
 });
@@ -128,7 +149,10 @@ router.post('/salvarRespostas', (req, res) => {
   Object.values(respostas).forEach((item) => {
     const sql = `insert into respostas (resposta, quizId, perguntaId, userId, serie) values ('${item.value}', '${quizId}', '${item.perguntaId}', '${userId}', '${serie}')`;
     connection.query(sql, (err, res) => {
-      if (err) throw err;
+      if (err) {
+        res.status(500);
+        res.send({status: 500, datails: err});
+      }
       console.log(res);
     });
   });
@@ -149,7 +173,10 @@ router.post('/buscarResultados', (req, res) => {
   sql += `WHERE quizzes.status = 1 AND respostas.userId = ${userId} `;
   sql += 'ORDER BY respostas.serie desc';
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    }
     res.send({ status: 200, result });
   });
 });

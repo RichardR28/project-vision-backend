@@ -68,7 +68,10 @@ router.post('/createUser', (req, res) => {
   sql += `${genero}, ${country}, ${estado}, ${cidade})`;
 
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     res.send({ status: 200, result });
   });
 });
@@ -77,7 +80,10 @@ router.get('/getGeneros', (req, res) => {
   let sql = 'select * from generos ';
   sql += 'order by label';
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     res.send(result);
   });
 });
@@ -87,7 +93,10 @@ router.post('/validaUsername', (req, res) => {
   let sql = 'select count(*) count from usuarios ';
   sql += `where username = "${req.body.username}"`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     console.log(result[0]);
     res.send(result);
   });
@@ -98,7 +107,10 @@ router.post('/validaEmail', (req, res) => {
   sql += `where email = "${req.body.email}"`;
   console.log(req.body.email);
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     console.log(result[0]);
     res.send(result);
   });
@@ -108,7 +120,10 @@ router.post('/login', (req, res) => {
   const senhaHash = gerarSenha(req.body.password);
   let sql = `select * from usuarios where (username = '${req.body.username}' or email = '${req.body.email}') and senha = '${senhaHash}'`;
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     res.send(result);
   });
 });
@@ -118,7 +133,10 @@ router.get('/getUserId', (req, res) => {
   let sql = `select id from usuarios where username = '${username}' and email = '${email}'`;
 
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     res.send(result);
   });
 });
@@ -127,7 +145,10 @@ router.post('/checkEmail', (req, res) => {
   const { email } = req.body;
   let sql = `select senha from usuarios where email = '${email}'`;
   connection.query(sql, async (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     if (result.length === 0) {
       res.send({ status: 500 });
     } else {
@@ -148,14 +169,20 @@ router.post('/redefineSenha', (req, res) => {
   const senhaHash = gerarSenha(senha);
   const sqlSelect = `select id, senha from usuarios where email = '${email}'`;
   connection.query(sqlSelect, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     const id = result[0].id;
     if (senhaHash === result[0].senha) {
       res.send({ status: 500, msg: 'A senha não pode ser igual à anterior.' });
     } else {
       let sqlUpdate = `update usuarios set senha = '${senhaHash}' where id = ${id} `;
       connection.query(sqlUpdate, (err2) => {
-        if (err2) throw err2;
+        if (err2) {
+          res.status(500);
+          res.send({status: 500, details: err2});
+        };
         res.send({ status: 200 });
       });
     }
@@ -169,7 +196,10 @@ router.post('/getUser', (req, res) => {
   sql += `where id = ${id} and username = '${username}' and email = '${email}'`;
 
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     res.send({ status: 200, result: result[0] });
   });
 });
@@ -179,7 +209,10 @@ router.post('/alteraUsuario', (req, res) => {
   let sql = `update usuarios set telefone = '${telefone}', idPais = ${pais}, idEstado = ${estado}, idCidade = ${cidade} where id = ${id};`;
 
   connection.query(sql, (err, result) => {
-    if (err) throw err;
+    if (err) {
+      res.status(500);
+      res.send({status: 500, details: err});
+    };
     res.send({ status: 200 });
   });
 });
