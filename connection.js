@@ -1,11 +1,19 @@
 var mysql = require('mysql');
 
 var connection = mysql.createConnection({
-  host: 'localhost',
+  host: 'vision.clmi8j83ukqy.sa-east-1.rds.amazonaws.com',
   user: 'root',
-  password: 'root',
+  password: 'rootroot',
   database: 'vision',
 });
+
+// local connection
+// var connection = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: 'root',
+//   database: 'vision',
+// });
 
 connection.connect((err) => {
   if (err) throw err;
