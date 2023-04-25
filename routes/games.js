@@ -76,10 +76,9 @@ router.post('/getSolicitacoesUsuarios', (req, res) => {
 });
 
 router.post('/registraPontuacao', (req, res) => {
-  const { userId, gameId, resultado01, resultado02, resultado03, media } =
-    req.body;
+  const { userId, gameId, resultado01, resultado02, resultado03, media, executor } = req.body;
   const serie = Date.now();
-  const sql = `insert into pontuacoes (gameId, userId, resultado01, resultado02, resultado03, media, serie) values ('${gameId}', '${userId}', '${resultado01}', '${resultado02}', '${resultado03}', '${media}', '${serie}')`;
+  const sql = `insert into pontuacoes (gameId, userId, resultado01, resultado02, resultado03, media, serie, executante) values ('${gameId}', '${userId}', '${resultado01}', '${resultado02}', '${resultado03}', '${media}', '${serie}', '${executor || ''}')`;
   const sql2 = `update jogos set acessos = acessos + 1 where id = ${gameId}`;
 
   connection.query(sql, (err, result) => {
