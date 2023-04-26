@@ -113,7 +113,7 @@ router.get('/listaJogosAtivos', (req, res) => {
 router.post('/listaPontuacoesUsuario', (req, res) => {
   const { id } = req.body;
   let sql =
-    'SELECT pontuacoes.id, pontuacoes.resultado01, pontuacoes.resultado02, pontuacoes.resultado03, pontuacoes.media, ';
+    'SELECT pontuacoes.id, pontuacoes.resultado01, pontuacoes.resultado02, pontuacoes.resultado03, pontuacoes.media, pontuacoes.executante, ';
   sql +=
     'pontuacoes.serie, usuarios.nome, usuarios.email, usuarios.telefone, jogos.titulo FROM pontuacoes ';
   sql +=
