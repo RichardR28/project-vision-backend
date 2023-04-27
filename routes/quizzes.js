@@ -144,10 +144,10 @@ router.post('/buscaTeste', (req, res) => {
 });
 
 router.post('/salvarRespostas', (req, res) => {
-  const { respostas, quizId, userId } = req.body;
+  const { respostas, quizId, userId, executor } = req.body;
   const serie = Date.now();
   Object.values(respostas).forEach((item) => {
-    const sql = `insert into respostas (resposta, quizId, perguntaId, userId, serie) values ('${item.value}', '${quizId}', '${item.perguntaId}', '${userId}', '${serie}')`;
+    const sql = `insert into respostas (resposta, quizId, perguntaId, userId, serie, executante) values ('${item.value}', '${quizId}', '${item.perguntaId}', '${userId}', '${serie}', '${executor || ''}')`;
     connection.query(sql, (err, res) => {
       if (err) {
         res.status(500);
@@ -163,7 +163,7 @@ router.post('/salvarRespostas', (req, res) => {
 router.post('/buscarResultados', (req, res) => {
   const { userId } = req.body;
   let sql =
-    'SELECT respostas.quizId, quizzes.titulo, quizzes.descricao, respostas.perguntaId, respostas.resposta, perguntas.resposta gabarito, respostas.serie, ';
+    'SELECT respostas.quizId, quizzes.titulo, quizzes.descricao, respostas.perguntaId, respostas.resposta, perguntas.resposta gabarito, respostas.serie, respostas.executante, ';
   sql +=
     'quizzes.imagem, usuarios.username, usuarios.nome, usuarios.email, usuarios.telefone ';
   sql += 'FROM respostas ';
