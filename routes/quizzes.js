@@ -146,18 +146,23 @@ router.post('/buscaTeste', (req, res) => {
 router.post('/salvarRespostas', (req, res) => {
   const { respostas, quizId, userId, executor } = req.body;
   const serie = Date.now();
+  const sql = `update quizzes set acessos = acessos + 1 where id = ${quizId}`;
   Object.values(respostas).forEach((item) => {
-    const sql = `insert into respostas (resposta, quizId, perguntaId, userId, serie, executante) values ('${item.value}', '${quizId}', '${item.perguntaId}', '${userId}', '${serie}', '${executor || ''}')`;
-    connection.query(sql, (err, res) => {
+    const sql2 = `insert into respostas (resposta, quizId, perguntaId, userId, serie, executante) values ('${item.value}', '${quizId}', '${item.perguntaId}', '${userId}', '${serie}', '${executor || ''}')`;
+    connection.query(sql2, (err2, result) => {
       if (err) {
         res.status(500);
-        res.send({status: 500, datails: err});
-      }
-      console.log(res);
+        res.send({status: 500, datails: err2});
+      }     
     });
   });
-
-  res.send({ status: 200 });
+  connection.query(sql, (err, result) => {
+    if (err) {
+      res.status(500);
+      res.send({status: 500, datails: err});
+    } 
+    res.send({ status: 200 });
+  });
 });
 
 router.post('/buscarResultados', (req, res) => {
