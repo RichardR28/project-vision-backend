@@ -150,7 +150,7 @@ router.post('/salvarRespostas', (req, res) => {
   Object.values(respostas).forEach((item) => {
     const sql2 = `insert into respostas (resposta, quizId, perguntaId, userId, serie, executante) values ('${item.value}', '${quizId}', '${item.perguntaId}', '${userId}', '${serie}', '${executor || ''}')`;
     connection.query(sql2, (err2, result) => {
-      if (err) {
+      if (err2) {
         res.status(500);
         res.send({status: 500, datails: err2});
       }     
