@@ -31,7 +31,7 @@ const upload = multer({
 });
 
 router.post(
-  '/savarQuiz',
+  '/salvarQuiz',
   upload.fields([{ name: 'imagem[]' }, { name: 'logo' }]),
   (req, res) => {
     const { titulo, descricao, id, perguntas } = req.body;
