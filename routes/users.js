@@ -243,6 +243,18 @@ router.post('/alterarSenha', (req, res) => {
   });
 });
 
+router.post('/validaSaltHash', (req, res) => {
+  const { info, codigo } = req.body;
+  let hash = crypto.createHmac('sha512', info.salt);
+  hash.update(codigo);
+  hash = hash.digest('hex');
+  if (hash === info.hash) {
+    res.send({ status: 200 });
+  } else {
+    res.send({ status: 500 });
+  }
+});
+
 async function enviaEmail(email, key) {
   const mailSent = await Trasporter.sendMail({
     text: `Olá, segue chave para troca de senha no sistema. CHAVE: ${key}`,
